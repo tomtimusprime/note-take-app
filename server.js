@@ -47,43 +47,23 @@ app.post("/api/notes", (req, res) => {
 
 });
 
-// DELETE `/api/notes/:id` - Should receive a query parameter containing the id of a note to delete. This means you'll need to find a way to give each note a unique `id` when it's saved. In order to delete a note, you'll need to read all notes from the `db.json` file, remove the note with the given `id` property, and then rewrite the notes to the `db.json` file.
+// DELETE `/api/notes/:id` - Should receive a query parameter containing the id of a note to delete. 
+// This means you'll need to find a way to give each note a unique `id` when it's saved. 
+// In order to delete a note, you'll need to read all notes from the `db.json` file, 
+// remove the note with the given `id` property, and then rewrite the notes to the `db.json` file.
 
 app.delete("/api/notes/:id", (req, res) => {
     const { id } = req.params;
-    console.log(id, db);
     db = db.filter((note, i) => {
         console.log(i !== id, i);
         if(i !== parseInt(id)) {
             return note;
         }
-    });
-    console.log(id, db); 
+    }); 
     fs.writeFileSync("./db/db.json", JSON.stringify(db));
     res.status(200).json({success: true});
 
 })
-
-app.post("/api/tables", function (request, response) {
-    console.log(`POST /api/tables called`);
-    const newReservation = request.body;
-    newReservation.id = (request.body.name.split(" "))[0].toLowerCase();
-
-    console.log(newReservation);
-
-    if(reservations.length > 5) {
-        waitList.push(newReservation);
-        console.log(waitList);
-        response.json("You've been added to the waitlist.");
-    }
-    else {
-        reservations.push(newReservation);
-        response.json("Your reservation has been added.");
-    }
-});
-
-
-
 
 app.listen(PORT, () => {
     console.log(`Server up and running on port ${PORT}`);
