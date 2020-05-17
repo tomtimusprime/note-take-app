@@ -7,6 +7,7 @@ const path = require("path");
 let db = require("./db/db.json");
 const fs = require("fs");
 const logger = require("morgan");
+const uid = require("uid");
 let id = 0;
 
 app.use(bodyParser.json());
@@ -40,6 +41,7 @@ app.get("/api/notes", (req, res) => {
 app.post("/api/notes", (req, res) => {
     console.log(`api notes post called`);
     let newNote = req.body;
+    newNote.id = uid();
     db.push(newNote);
     fs.writeFileSync("./db/db.json", JSON.stringify(db));
     console.log(db);
@@ -54,12 +56,8 @@ app.post("/api/notes", (req, res) => {
 
 app.delete("/api/notes/:id", (req, res) => {
     const { id } = req.params;
-    db = db.filter((note, i) => {
-        console.log(i !== id, i);
-        if(i !== parseInt(id)) {
-            return note;
-        }
-    }); 
+    db = db.filter((note) => note.id !== id); 
+    console.log(db);
     fs.writeFileSync("./db/db.json", JSON.stringify(db));
     res.status(200).json({success: true});
 
